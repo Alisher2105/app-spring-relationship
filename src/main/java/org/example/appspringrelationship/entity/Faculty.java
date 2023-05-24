@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"name","university_id"}))
+// Name va university id ni birgalikda unique qildi
 public class Faculty {
 
     @Id

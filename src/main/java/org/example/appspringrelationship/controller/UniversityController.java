@@ -7,12 +7,10 @@ import org.example.appspringrelationship.payload.UniversityDto;
 import org.example.appspringrelationship.repository.AddressRepository;
 import org.example.appspringrelationship.repository.UniversityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class UniversityController {
@@ -30,6 +28,7 @@ public class UniversityController {
         return universityList;
     }
 
+    //CREATE
     @RequestMapping(value = "/university",method = RequestMethod.POST)
     public String addUniversity(@RequestBody UniversityDto universityDto){
         // Yangi Address ochdim
@@ -47,6 +46,37 @@ public class UniversityController {
         universityRepository.save(university);
 
         return "Universitet saqlandi";
+    }
+
+    // UPDATE
+    @RequestMapping(value = "/university/{id}",method = RequestMethod.PUT)
+    public String editUniversity(@PathVariable Integer id,@RequestBody UniversityDto universityDto){
+        Optional<University> optionalUniversity = universityRepository.findById(id);
+        if (optionalUniversity.isPresent()){
+
+            University university = optionalUniversity.get();
+            university.setName(universityDto.getName());
+
+            // UNiversitet adresini yangilash
+            Address address = university.getAddress();
+            address.setCity(universityDto.getCity());
+            address.setStreet(universityDto.getStreet());
+            address.setDistrict(universityDto.getDistrict());
+            addressRepository.save(address);
+            universityRepository.save(university);
+            return "Universitet o`zgartirildi";
+        }
+        return "Universitet topilmadi";
+
+
+    }
+
+    // DELETE
+    @RequestMapping(value = "/university/{id}",method = RequestMethod.DELETE)
+    public String deleteUniversity(@PathVariable Integer id){
+        universityRepository.deleteById(id);
+        return "Universitet o`chirildi";
+
     }
 }
 
